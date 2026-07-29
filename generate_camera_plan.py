@@ -1,23 +1,22 @@
 import requests
 import json
 import os
+import time
 
-# ===================== 环境变量读取（密钥存Github Secrets，禁止硬编码） =====================
+# ===================== 环境变量读取（密钥存在Github Secrets，禁止硬编码） =====================
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 CAIYUN_TOKEN = os.getenv("CAIYUN_TOKEN")
 SERVERCHAN_SENDKEY = os.getenv("SERVERCHAN_SENDKEY")
 
 # 固定配置
 LON, LAT = 113.92, 35.31  # 新乡红旗区坐标
-MORNING_TIME = "07:40"
-EVENING_TIME = "18:20"
 DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
 MODEL = "deepseek-v4-flash"
-# =========================================================================================
 
+# ===================== 函数定义 =====================
 def get_caiyun_weather():
     """调用彩云天气API获取精细化气象数据"""
-    url = f"https://api.caiyunapp.com/v2.6/{CAIYUN_TOKEN}/{LON},{LAT}/weather?dailysteps=1&hourlysteps=24"
+    url = f"https://api.caiyunapp.com/v2.6/{CAIYUN_TOKEN}/{LON},{LAT}?weather=daily&hourlysteps=24"
     resp = requests.get(url, timeout=30)
     return resp.json()
 
@@ -67,17 +66,17 @@ def generate_drone_plan(weather_data, max_retry=2):
                 continue
             else:
                 raise e
-                
+
 def send_wechat_notice(title, content):
-    """Server酱 Turbo 推送微信消息"""
+    """ServerChan Turbo 推送微信"""
     push_url = f"https://sctapi.ftqq.com/{SERVERCHAN_SENDKEY}.send"
     data = {
         "title": title,
         "desp": content
     }
-    requests.post(push_url, data=data)
+    requests.post(push_url, data)
 
-
+# ===================== 程序入口 =====================
 if __name__ == "__main__":
     try:
         weather_info = get_caiyun_weather()
