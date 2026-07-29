@@ -80,7 +80,7 @@ def send_wechat_notice(title, content):
 if __name__ == "__main__":
     try:
         weather_info = get_caiyun_weather()
-        plan_result = generate_drone_plan(weather_info)
+        plan_result = generate_camera_plan(weather_info)
         send_wechat_notice("【每日通勤拍摄方案】", plan_result)
     except Exception as err:
         error_text = f"自动化脚本执行失败\n错误信息：{str(err)}"
