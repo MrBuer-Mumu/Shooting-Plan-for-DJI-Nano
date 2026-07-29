@@ -20,7 +20,7 @@ def get_caiyun_weather():
     resp = requests.get(url, timeout=30)
     return resp.json()
 
-def generate_drone_plan(weather_data, max_retry=2):
+def generate_camera_plan(weather_data, max_retry=2):
     """DeepSeek 生成通勤拍摄方案，增加网络重试"""
     headers = {
         "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
