@@ -21,8 +21,8 @@ def get_caiyun_weather():
     resp = requests.get(url, timeout=30)
     return resp.json()
 
-def generate_drone_plan(weather_data, max_retry=2):
-    """DeepSeek 生成通勤手持拍摄方案，增加网络重试"""
+def generate_camera_plan(weather_data, max_retry=2):
+    """DeepSeek 生成通勤拍摄方案，增加网络重试"""
     headers = {
         "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
         "Content-Type": "application/json"
@@ -40,8 +40,8 @@ def generate_drone_plan(weather_data, max_retry=2):
 1. 环境拍摄评估：大风、沙尘、大雨、浓雾、逆光、路面反光等环境对拍摄的影响与注意事项；雨天重点提醒设备防水、镜头防雨水沾附
 2. 两个通勤区间的光照情况、逆光风险预判、自然光特点
 3. Osmo Nano推荐拍摄参数：曝光、白平衡、快门思路；结合路况与光线给出建议
-4. 推荐手持运镜方式；判断当下天气、光线是否适合拍摄延时短片
-5. 通勤路上手持拍摄实操小提醒
+4. 推荐运镜方式；判断当下天气、光线是否适合拍摄延时短片
+5. 通勤路上拍摄实操小提醒
 
 禁止出现无人机、起飞、飞行、高度这类无关词汇，禁止空话，使用清晰分点排版。
 
@@ -52,7 +52,7 @@ def generate_drone_plan(weather_data, max_retry=2):
         "model": MODEL,
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": "生成今日通勤手持拍摄方案"}
+            {"role": "user", "content": "生成今日通勤拍摄方案"}
         ],
         "temperature": 0.7,
         "stream": False
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     try:
         weather_info = get_caiyun_weather()
         plan_result = generate_drone_plan(weather_info)
-        send_wechat_notice("【每日通勤航拍方案】", plan_result)
+        send_wechat_notice("【每日通勤拍摄方案】", plan_result)
     except Exception as err:
         error_text = f"自动化脚本执行失败\n错误信息：{str(err)}"
-        send_wechat_notice("⚠️航拍方案任务异常", error_text)
+        send_wechat_notice("⚠️通勤拍摄方案任务异常", error_text)
