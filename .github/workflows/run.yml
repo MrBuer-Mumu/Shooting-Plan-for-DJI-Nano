@@ -1,4 +1,4 @@
-name: 每日通勤拍摄方案
+name: Shooting Plan for DJI Nano
 
 on:
   workflow_dispatch:
