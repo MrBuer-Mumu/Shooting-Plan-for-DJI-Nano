@@ -26,4 +26,4 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           CAIYUN_TOKEN: ${{ secrets.CAIYUN_TOKEN }}
           SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
-        run: generate_drone_plan.py
+        run: generate_camera_plan.py
