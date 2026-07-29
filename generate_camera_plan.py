@@ -21,7 +21,7 @@ def get_caiyun_weather():
     resp = requests.get(url, timeout=30)
     return resp.json()
 
-def generate_camera_plan(weather_data, max_retry=2):
+def generate_drone_plan(weather_data, max_retry=2):
     """DeepSeek 生成通勤拍摄方案，增加网络重试"""
     headers = {
         "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
@@ -29,21 +29,21 @@ def generate_camera_plan(weather_data, max_retry=2):
     }
 
     system_prompt = f"""
-你是专业随身通勤拍摄指导。
+你是专业车载通勤拍摄指导。
 拍摄区域：河南新乡红旗区 ↔ 延津县通勤道路
-拍摄设备：DJI Osmo Nano口袋手持云台相机
+拍摄设备：DJI Osmo Nano，固定安装于汽车前挡风玻璃进行车内拍摄
 实际通勤时间：
 早间：06:40从红旗区出发，07:25到达延津
 晚间：18:05从延津出发，18:45回到红旗区
 
 依据彩云天气气象数据输出通勤拍摄方案，结构清晰、适合手机阅读，严格区分两个通勤时段，内容包含：
-1. 环境拍摄评估：大风、沙尘、大雨、浓雾、逆光、路面反光等环境对拍摄的影响与注意事项；雨天重点提醒设备防水、镜头防雨水沾附
-2. 两个通勤区间的光照情况、逆光风险预判、自然光特点
-3. Osmo Nano推荐拍摄参数：曝光、白平衡、快门思路；结合路况与光线给出建议
-4. 推荐运镜方式；判断当下天气、光线是否适合拍摄延时短片
-5. 通勤路上拍摄实操小提醒
+1. 环境拍摄评估：大风、沙尘、大雨、浓雾、逆光、路面反光、车窗起雾等环境对拍摄的影响与注意事项；雨天重点提醒镜头防雨、车窗水汽问题
+2. 两个通勤区间的光照情况、逆光风险预判、自然光特点、阳光照射角度对前挡拍摄的影响
+3. Osmo Nano推荐拍摄参数：曝光、白平衡、快门思路；结合路况与光线给出适配车载机位的建议
+4. 推荐运镜思路；判断当下天气、光线是否适合拍摄延时短片
+5. 车载固定机位拍摄实操小提醒
 
-禁止出现无人机、起飞、飞行、高度这类无关词汇，禁止空话，使用清晰分点排版。
+禁止出现无人机、起飞、飞行、手持这类无关词汇，禁止空话，使用清晰分点排版。
 
 气象数据：
 {json.dumps(weather_data, ensure_ascii=False)}
@@ -63,7 +63,6 @@ def generate_camera_plan(weather_data, max_retry=2):
             return res.json()["choices"][0]["message"]["content"]
         except Exception as e:
             if attempt < max_retry:
-                import time
                 time.sleep(3)  # 等待3秒重试
                 continue
             else:
