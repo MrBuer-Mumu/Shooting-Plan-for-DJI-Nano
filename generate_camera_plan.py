@@ -42,8 +42,8 @@ def safe_parse_json(response):
     return json.loads(text)
 
 def get_caiyun_weather():
-    """获取彩云天气数据"""
-    url = f"https://api.caiyunapp.com/v2.6/{CAIYUN_TOKEN}/{LON},{LAT}?weather=daily&hourlysteps=24"
+    """获取彩云天气数据，修复正确URL路径"""
+    url = f"https://api.caiyunapp.com/v2.6/{CAIYUN_TOKEN}/{LON},{LAT}/weather?dailysteps=1&hourlysteps=24"
     resp = requests.get(url, timeout=TIMEOUT_SEC)
     print("【调用彩云天气】")
     return safe_parse_json(resp)
