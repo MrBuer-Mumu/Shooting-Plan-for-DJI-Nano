@@ -111,11 +111,32 @@ def generate_plan_auto_fallback(weather_data) -> str:
         return "⚠️【备用线路 Gemini 生成方案，主接口不可用】\n\n" + result
 
 
-def send_wechat_notice(title, content):
-    """Server酱微信推送"""
-    push_url = f"https://sctapi.ftqq.com/{SERVERCHAN_SENDKEY}.send"
-    data = {"title": title, "desp": content}
-    requests.post(push_url, data, timeout=15)
+import requests
+import time
+
+def send_wechat_notice(sendkey, title, content, retry_times=2):
+    api_url = f"https://sctapi.ftqq.com/{sendkey}.send"
+    payload = {
+        "title": title,
+        "desp": content
+    }
+    for attempt in range(retry_times + 1):
+        try:
+            # 延长超时时间，防止海外连接卡死
+            resp = requests.post(api_url, data=payload, timeout=25)
+            result = resp.json()
+            print(f"推送尝试{attempt+1}，接口返回：{result}")
+            if result.get("errcode") == 0:
+                print("✅微信推送提交成功")
+                return True
+            else:
+                print(f"❌推送接口返回错误：{result}")
+        except Exception as err:
+            print(f"⚠️第{attempt+1}次推送网络异常：{str(err)}")
+        # 失败等待3秒重试
+        time.sleep(3)
+    print("❌多次重试，微信推送最终失败！")
+    return False
 
 
 # ===================== 程序入口 =====================
