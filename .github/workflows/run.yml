@@ -1,0 +1,29 @@
+name: Drone Daily Flight Plan
+on:
+  schedule:
+    # UTC时区！北京时间 = UTC+8
+    # cron: '分 时 日 月 星期'
+    # 示例：想要北京时间 06:55执行推送 → UTC前一天22:55
+    - cron: '55 22 * * *'
+  workflow_dispatch: # 支持手动点击测试运行
+
+jobs:
+  run-task:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 配置Python环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 运行航拍方案脚本
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          CAIYUN_TOKEN: ${{ secrets.CAIYUN_TOKEN }}
+          SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
+        run: python flight_plan.py
