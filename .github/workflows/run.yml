@@ -1,4 +1,4 @@
-name: Drone Daily Flight Plan
+name: Shooting Plan for DJI Nano
 on:
   schedule:
     # UTC时区！北京时间 = UTC+8
@@ -26,4 +26,4 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           CAIYUN_TOKEN: ${{ secrets.CAIYUN_TOKEN }}
           SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
-        run: python flight_plan.py
+        run: generate_drone_plan.py
